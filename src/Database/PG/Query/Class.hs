@@ -47,6 +47,7 @@ import qualified Data.ByteString                  as B
 import qualified Data.ByteString.Lazy             as BL
 import qualified Data.Text                        as T
 import qualified Data.Text.Lazy                   as TL
+import qualified Data.UUID                        as UUID
 import qualified Data.Vector                      as V
 import qualified Data.Vector.Mutable              as VM
 import qualified Database.PostgreSQL.LibPQ        as PQ
@@ -133,6 +134,9 @@ instance FromCol UTCTime where
 
 instance FromCol Bool where
   fromCol = fromColHelper PD.bool
+
+instance FromCol UUID.UUID where
+  fromCol = fromColHelper PD.uuid
 
 instance FromCol a => FromCol (Maybe a) where
   fromCol Nothing = return Nothing
@@ -650,6 +654,9 @@ instance BinaryEncBuiltInTy Bool where
 instance BinaryEncBuiltInTy Day where
   btBinaryEncInfo = binEncHelper $(PTI.arrOidsQ PTI.date) PE.date
   --toPrepVal = toPrepValHelper PTI.date PE.date
+
+instance ToPrepArg UUID.UUID where
+  toPrepVal = toPrepValHelper PTI.uuid PE.uuid
 
 newtype JSON  = JSON J.Value deriving (Eq, Show)
 newtype JSONB =  JSONB J.Value deriving (Eq, Show)
